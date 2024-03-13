@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Card } from 'antd';
+import { Card, Button } from 'antd';
 
 export const Cards = () => {
   const [posts, setPosts] = useState([]);
@@ -14,7 +14,9 @@ export const Cards = () => {
       .then(response => response.json())
       .then(data => setUsers(data))
   }, []);
-
+  const handleClick = (postId) => {
+    window.open('/post/' + postId);
+  };
   return (
     <div>
       {posts.map(post => (
@@ -29,7 +31,9 @@ export const Cards = () => {
         >
           <p>{post.title}</p>
           <p>{post.body}</p>
+          <Button type="dashed" onClick={() => handleClick(post.id)}>View</Button>
         </Card>
+        
       ))}
     </div>
   );
