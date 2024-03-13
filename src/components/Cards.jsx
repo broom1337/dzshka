@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Button } from 'antd';
 
+import React, { useState, useEffect } from 'react';
+import { Card, Button } from 'antd';
+
 export const Cards = () => {
   const [posts, setPosts] = useState([]);
   const [users, setUsers] = useState([]);
