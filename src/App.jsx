@@ -1,99 +1,40 @@
-import logo from './logo.svg';
-import './App.css';
-import {PageLayout} from './components/Layout/Layout';
-import {Cards} from './components/Cards';
-import { useEffect, useState } from 'react';
-import { Routes, Route, useParams, useLocation} from 'react-router-dom'
+import React, { useState, useEffect } from 'react';
+import { Card, Button } from 'antd';
 
+export const Cards = () => {
+  const [posts, setPosts] = useState([]);
+  const [users, setUsers] = useState([]);
 
-function App() {
-  const [posts, setPosts] = useState([])
+  useEffect(() => {
+    fetch('https://jsonplaceholder.typicode.com/posts')
+      .then(response => response.json())
+      .then(data => setPosts(data))
 
-  const user = {
-    name: '',
-    age: '',
-    role: 'admin'
-  }
-  
-
-  const isAdmin = (element) => ( user.role == 'admin' ? element : <PageError />)
+    fetch('https://jsonplaceholder.typicode.com/users')
+      .then(response => response.json())
+      .then(data => setUsers(data))
+  }, []);
+  const handleClick = (postId) => {
+    window.open('/post/' + postId);
+  };
   return (
-    //<Layout>
-
-      <Routes>
-        <Route path='/*' element={isAdmin(<Cards />)}> 
-          <Route index element={<HomeComponent posts={posts}/>}/>
-        </Route>
-        <Route path='info' element={<Cards />} />
-        <Route path='user' element={<>user</>} />
-        <Route path='*' />
-
-        <Route path='/auth/'> 
-         <Route index element={<HomeComponent posts={posts}/>}/>
-       </Route>
-       <Route path='login' element={<InfoPage />} />
-       <Route path='reset_password' element={<>user</>} />
-       <Route path='*' element={<>ERROR 404</>} />
-       
-
-      <Route path='/error/' element={<PageLayout />}> 
-      <Route index element={<></>}/>
-      </Route>
-      <Route path='info' element={<InfoPage />} />
-      <Route path='user' element={<>user</>} />
-      <Route path='*' />
-    </Routes>
-
-    //</Layout>
-    
-  );
-}
-
-export default App;
-
-const HomeComponent = ({posts}) => {
-    const params = useParams()
-    const location = useLocation()
-    return (
-      <div style= {{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '8px',
-        width: '64 em',
-        margin: '0 auto',
-        marginTop: '20px'
-     }}>
-       {posts.map((post,index) => <PostComponent postData={post}/>)}
-      </div>   
-    )
-}
-const PostComponent = ({postData}) => {
-  return(
-    <div style={{
-      border: '1px solid #333',
-      padding: '12px',
-      borderRadius: '50px'
-    }}>
-      <p>{postData.userId}</p>
-      <p>{postData.title}</p>
-      <p>{postData.body}</p>
+    <div>
+      {posts.map(post => (
+        <Card
+          key={post.id}
+          title={users.find(user => user.id === post.userId).name}
+          style={{
+            width: 300,
+            margin: 'auto',
+            border: '1px solid black'
+          }}
+        >
+          <p>{post.title}</p>
+          <p>{post.body}</p>
+          <Button type="dashed" onClick={() => handleClick(post.id)}>View</Button>
+        </Card>
+        
+      ))}
     </div>
-   )
-}
-
-const InfoPage = () => {
-  const location = useLocation()
-  //const {tel} = location.state
-  return(
-    
-    <>
-     info
-      
-    </>
-  )
-}
-const PageError = () => {
-  return(
-    <>У вас нет роли администратора</>
-  )
-}
+  );
+};
